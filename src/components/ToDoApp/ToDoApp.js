@@ -1,35 +1,32 @@
 import { Component } from "react";
-
 import NewTaskForm from "../NewTaskForm/NewTaskForm";
 import TaskList from "../TaskList/TaskList";
 import Footer from "../Footer/Footer";
-
 import "./ToDoApp.css";
 
 export default class ToDoApp extends Component {
   state = {
-    taskProps: [
-      {
+    taskProps: [],
+    filter: "All",
+  };
+
+  addTask = (taskText) => {
+    this.setState(({ taskProps }) => {
+      const newTask = {
         taskClass: "",
-        taskText: "First task",
-        taskCreated: "created 30 minutes ago",
-      },
-      {
-        taskClass: "",
-        taskText: "Second task",
-        taskCreated: "created 5 minutes ago",
-      },
-      {
-        taskClass: "",
-        taskText: "Third task",
-        taskCreated: "created 10 seconds ago",
-      },
-    ],
+        taskText,
+        taskCreated: "timer isn't ready yet",
+        taskChecked: false,
+        taskId: `${this.state.taskProps.length}-${Math.random().toFixed(4)}`,
+      };
+
+      return { taskProps: [...taskProps, newTask] };
+    });
   };
 
   deleteTask = (id) => {
     this.setState(({ taskProps }) => {
-      const idx = +id[0];
+      const idx = taskProps.findIndex((el) => el.taskId === id);
       const newTaskPropsArr = [
         ...taskProps.slice(0, idx),
         ...taskProps.slice(idx + 1),
@@ -39,38 +36,80 @@ export default class ToDoApp extends Component {
     });
   };
 
-  completeTask = (id) => {
+  toggleCompleteTask = (id) => {
     this.setState(({ taskProps }) => {
-      const idx = +id[0];
+      const idx = taskProps.findIndex((el) => el.taskId === id);
       const task = { ...taskProps[idx] };
 
-      if (task.taskClass === "completed") {
+      if (task.taskChecked) {
         task.taskClass = "";
-      } else if (task.taskClass !== "completed") {
+      } else if (!task.taskChecked) {
         task.taskClass = "completed";
       }
+      task.taskChecked = !task.taskChecked;
 
-      const newTaskPropsArr = [
-        ...taskProps.slice(0, idx),
-        task,
-        ...taskProps.slice(idx + 1),
-      ];
+      const newTaskPropsArr = taskProps.with(idx, task);
 
       return { taskProps: newTaskPropsArr };
     });
+  };
+
+  changeFilter = (filterName) => {
+    this.setState({ filter: filterName });
+  };
+
+  showFilteredTasks = (filterName) => {
+    let filteredTasks;
+
+    if (filterName === "All") {
+      filteredTasks = this.state.taskProps;
+    } else if (filterName === "Active") {
+      filteredTasks = this.state.taskProps.filter((el) => el.taskClass === "");
+    } else {
+      filteredTasks = this.state.taskProps.filter(
+        (el) => el.taskClass === "completed"
+      );
+    }
+
+    return filteredTasks;
+  };
+
+  deleteCompletedTasks = () => {
+    this.setState(({ taskProps }) => {
+      const newTaskPropsArr = taskProps.filter(
+        (el) => el.taskClass !== "completed"
+      );
+
+      return { taskProps: newTaskPropsArr };
+    });
+  };
+
+  countingTasksLeft = () => {
+    const tasksLeft = this.state.taskProps.filter(
+      (el) => el.taskClass !== "completed"
+    ).length;
+
+    return tasksLeft;
   };
 
   render() {
+    const filteredTasks = this.showFilteredTasks(this.state.filter);
+
     return (
       <section className="todoapp">
-        <NewTaskForm />
+        <NewTaskForm appAddTask={this.addTask} />
         <section className="main">
           <TaskList
-            taskProps={this.state.taskProps}
-            appOnDeleted={this.deleteTask}
-            appOnCompleted={this.completeTask}
+            taskProps={filteredTasks}
+            appDeleteTask={this.deleteTask}
+            appToggleCompleteTask={this.toggleCompleteTask}
           />
-          <Footer />
+          <Footer
+            filter={this.state.filter}
+            appChangeFilter={this.changeFilter}
+            appDeleteCompletedTasks={this.deleteCompletedTasks}
+            appCountingTasksLeft={this.countingTasksLeft}
+          />
         </section>
       </section>
     );

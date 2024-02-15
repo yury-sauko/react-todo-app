@@ -1,15 +1,15 @@
 import "./Task.css";
 
-function Task({ taskProps, onDeleted, onCompleted }) {
-  const tasksArr = taskProps.map((el, idx) => {
-    const id = `${idx}-${window.btoa(encodeURIComponent(el.taskText))}`;
+function Task({ taskProps, deleteTask, toggleCompleteTask }) {
+  const tasksArr = taskProps.map((el) => {
     return (
-      <li className={el.taskClass} key={id}>
+      <li className={el.taskClass} key={el.taskId}>
         <div className="view">
           <input
             className="toggle"
             type="checkbox"
-            onClick={() => onCompleted(id)}
+            checked={el.taskChecked}
+            onClick={() => toggleCompleteTask(el.taskId)}
           />
           <label>
             <span className="description">{el.taskText}</span>
@@ -18,7 +18,7 @@ function Task({ taskProps, onDeleted, onCompleted }) {
           <button className="icon icon-edit"></button>
           <button
             className="icon icon-destroy"
-            onClick={() => onDeleted(id)}
+            onClick={() => deleteTask(el.taskId)}
           ></button>
         </div>
         {el.taskClass === "editing" && (

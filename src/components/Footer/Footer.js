@@ -1,13 +1,31 @@
 import TasksFilter from "../TasksFilter/TasksFilter";
-
 import "./Footer.css";
 
-function Footer() {
+function Footer({
+  filter,
+  appChangeFilter,
+  appDeleteCompletedTasks,
+  appCountingTasksLeft,
+}) {
+  const itemsLeft = appCountingTasksLeft();
+
   return (
     <footer className="footer">
-      <span className="todo-count">1 items left</span>
-      <TasksFilter />
-      <button className="clear-completed">Clear completed</button>
+      <span className="todo-count">{itemsLeft} items left</span>
+      <TasksFilter
+        filter={filter}
+        changeFilter={(filterName) => {
+          appChangeFilter(filterName);
+        }}
+      />
+      <button
+        className="clear-completed"
+        onClick={() => {
+          appDeleteCompletedTasks();
+        }}
+      >
+        Clear completed
+      </button>
     </footer>
   );
 }

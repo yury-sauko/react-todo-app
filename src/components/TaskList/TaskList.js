@@ -1,14 +1,13 @@
 import Task from "../Task/Task";
-
 import "./TaskList.css";
 
-function TaskList({ taskProps, appOnDeleted, appOnCompleted }) {
+function TaskList({ taskProps, appDeleteTask, appToggleCompleteTask }) {
   return (
     <ul className="todo-list">
       <Task
         taskProps={taskProps}
-        onDeleted={(id) => appOnDeleted(id)}
-        onCompleted={(id) => appOnCompleted(id)}
+        deleteTask={(id) => appDeleteTask(id)}
+        toggleCompleteTask={(id) => appToggleCompleteTask(id)}
       />
     </ul>
   );
