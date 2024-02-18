@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import TasksFilter from "../TasksFilter/TasksFilter";
 import "./Footer.css";
 
@@ -29,5 +30,18 @@ function Footer({
     </footer>
   );
 }
+
+Footer.defaultProps = {
+  filter: "All",
+  itemsLeft: 0,
+};
+
+Footer.propTypes = {
+  filter: PropTypes.string,
+  itemsLeft: PropTypes.number,
+  appChangeFilter: PropTypes.func.isRequired,
+  appDeleteCompletedTasks: PropTypes.func.isRequired,
+  appCountingTasksLeft: PropTypes.func.isRequired,
+};
 
 export default Footer;

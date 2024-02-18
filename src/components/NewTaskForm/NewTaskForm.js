@@ -1,7 +1,12 @@
 import { Component } from "react";
+import PropTypes from "prop-types";
 import "./NewTaskForm.css";
 
 export default class NewTaskForm extends Component {
+  static propTypes = {
+    appAddTask: PropTypes.func.isRequired,
+  };
+
   state = {
     label: "",
   };
@@ -30,6 +35,7 @@ export default class NewTaskForm extends Component {
           className="new-todo"
           placeholder="What needs to be done?"
           autoFocus
+          name="newTaskInput"
           value={this.state.label}
           onChange={this.onLabelChange}
         />

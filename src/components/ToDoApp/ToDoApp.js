@@ -15,7 +15,7 @@ export default class ToDoApp extends Component {
       const newTask = {
         taskClass: "",
         taskText,
-        taskCreated: "timer isn't ready yet",
+        taskCreated: new Date(),
         taskChecked: false,
         taskId: `${this.state.taskProps.length}-${Math.random().toFixed(4)}`,
       };
