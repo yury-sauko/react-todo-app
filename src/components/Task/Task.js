@@ -39,7 +39,9 @@ export default class Task extends Component {
     const { taskId } = this.props.oneTaskProps;
     const { editTask } = this.props;
 
-    editTask(taskId, this.state.label);
+    if (this.state.label.trim().length) {
+      editTask(taskId, this.state.label.trim());
+    }
 
     this.setState(({ isEditing }) => ({
       label: "",
