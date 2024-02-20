@@ -2,14 +2,23 @@ import PropTypes from "prop-types";
 import Task from "../Task/Task";
 import "./TaskList.css";
 
-function TaskList({ taskProps, appDeleteTask, appToggleCompleteTask }) {
+function TaskList({
+  taskProps,
+  appEditTask,
+  appDeleteTask,
+  appToggleCompleteTask,
+}) {
   return (
     <ul className="todo-list">
-      <Task
-        taskProps={taskProps}
-        deleteTask={(id) => appDeleteTask(id)}
-        toggleCompleteTask={(id) => appToggleCompleteTask(id)}
-      />
+      {taskProps.map((oneTaskProps) => (
+        <Task
+          key={oneTaskProps.taskId}
+          oneTaskProps={oneTaskProps}
+          editTask={(id, newTaskText) => appEditTask(id, newTaskText)}
+          deleteTask={(id) => appDeleteTask(id)}
+          toggleCompleteTask={(id) => appToggleCompleteTask(id)}
+        />
+      ))}
     </ul>
   );
 }
@@ -20,6 +29,7 @@ TaskList.defaultProps = {
 
 TaskList.propTypes = {
   taskProps: PropTypes.arrayOf(PropTypes.object),
+  appEditTask: PropTypes.func.isRequired,
   appDeleteTask: PropTypes.func.isRequired,
   appToggleCompleteTask: PropTypes.func.isRequired,
 };

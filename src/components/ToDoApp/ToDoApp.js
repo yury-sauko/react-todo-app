@@ -24,6 +24,18 @@ export default class ToDoApp extends Component {
     });
   };
 
+  editTask = (id, newTaskText) => {
+    this.setState(({ taskProps }) => {
+      const idx = taskProps.findIndex((el) => el.taskId === id);
+      const editingTask = { ...taskProps[idx] };
+      editingTask.taskText = newTaskText;
+
+      const newTaskPropsArr = taskProps.with(idx, editingTask);
+
+      return { taskProps: newTaskPropsArr };
+    });
+  };
+
   deleteTask = (id) => {
     this.setState(({ taskProps }) => {
       const idx = taskProps.findIndex((el) => el.taskId === id);
@@ -101,6 +113,7 @@ export default class ToDoApp extends Component {
         <section className="main">
           <TaskList
             taskProps={filteredTasks}
+            appEditTask={this.editTask}
             appDeleteTask={this.deleteTask}
             appToggleCompleteTask={this.toggleCompleteTask}
           />
