@@ -1,1 +1,1 @@
-**Ссылка на развернутое приложение:** **_[todo-ys.vercel.app](https://todo-ys.vercel.app/)_**
+**Ссылка на развернутое приложение:** <a href="https://todo-ys.vercel.app/" target="_blank">todo-ys.vercel.app</a>
