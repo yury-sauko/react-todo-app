@@ -59,7 +59,7 @@
     "prettier": "3.2.5"
   },
   "lint-staged": {
-    "src/**/*.{js,html.css}": "prettier --write",
+    "src/**/*.{js,html,css}": "prettier --write",
     "src/**/*.js": "eslint"
   }
 }
