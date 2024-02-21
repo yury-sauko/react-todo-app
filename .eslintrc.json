@@ -19,11 +19,17 @@
       "jsx": true
     },
     "ecmaVersion": "latest",
-    "sourceType": "module"
+    "sourceType": "module",
+    "requireConfigFile": false,
+    "babelOptions": {
+      "presets": ["@babel/preset-react"]
+    }
   },
-  "plugins": ["@babel/eslint-parser", "react", "react-hooks", "jsx-a11y", "import", "prettier"],
+  "plugins": ["react", "react-hooks", "jsx-a11y", "import"],
   "rules": {
-    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }]
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+    "react/jsx-uses-react": "off",
+    "react/react-in-jsx-scope": "off"
   },
   "settings": {
     "react": {
