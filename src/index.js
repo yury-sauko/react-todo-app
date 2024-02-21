@@ -1,12 +1,11 @@
-import { createRoot } from "react-dom/client";
-import { StrictMode } from "react";
-import ToDoApp from "./components/ToDoApp/ToDoApp";
+import { createRoot } from 'react-dom/client';
+import { StrictMode } from 'react';
+import ToDoApp from './components/ToDoApp/ToDoApp';
 
-const root = createRoot(document.getElementById("root"));
+const root = createRoot(document.getElementById('root'));
 
 root.render(
-  <StrictMode>
-    <ToDoApp />
-  </StrictMode>
+    <StrictMode>
+        <ToDoApp />
+    </StrictMode>,
 );
-// test husky
