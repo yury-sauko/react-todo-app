@@ -66,6 +66,13 @@ export default class Task extends Component {
                         onChange={() => toggleCompleteTask(taskId)}
                     />
                     <label htmlFor={taskId + taskText.length}>
+                        {/* begin */}
+                        <span className="description">
+                            <button className="icon icon-play" type="button" aria-label="icon-play" />
+                            <button className="icon icon-pause" type="button" aria-label="icon-pause" />
+                            12:25
+                        </span>
+                        {/* end */}
                         <span className="description">{taskText}</span>
                         <span className="created">{`created ${formattedCreateTime}`}</span>
                     </label>
