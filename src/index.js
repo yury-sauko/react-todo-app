@@ -5,7 +5,7 @@ import ToDoApp from './components/ToDoApp/ToDoApp';
 const root = createRoot(document.getElementById('root'));
 
 root.render(
-    <StrictMode>
-        <ToDoApp />
-    </StrictMode>,
+  <StrictMode>
+    <ToDoApp />
+  </StrictMode>,
 );
