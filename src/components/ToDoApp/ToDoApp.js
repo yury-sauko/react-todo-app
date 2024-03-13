@@ -2,7 +2,7 @@ import { Component } from 'react';
 import NewTaskForm from '../NewTaskForm/NewTaskForm';
 import TaskList from '../TaskList/TaskList';
 import Footer from '../Footer/Footer';
-import './ToDoApp.css';
+import './ToDoApp.css'; // все стили, для таймера не разбивал по файлам
 
 export default class ToDoApp extends Component {
   state = {
