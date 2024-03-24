@@ -21,7 +21,7 @@ export default class ToDoApp extends Component {
         minLeft: null,
         secLeft: null,
         timerId: null,
-        isTimerFull: true,
+        // isTimerFull: true, // так и не использовал этот флаг
         taskCreated: new Date(),
         taskChecked: false,
         taskId: `${this.state.taskProps.length}-${Math.random().toFixed(4)}`,
@@ -68,6 +68,8 @@ export default class ToDoApp extends Component {
         task.taskClass = 'completed';
         clearTimeout(taskProps[idx].timerId);
         task.isPlayActive = false;
+        task.minLeft = 0;
+        task.secLeft = 0;
       }
       task.taskChecked = !task.taskChecked;
 
@@ -115,7 +117,7 @@ export default class ToDoApp extends Component {
 
     const { min, sec, isPlayActive, minLeft, secLeft } = task;
 
-    if (isPlayActive) return;
+    if (isPlayActive || (task.minLeft === 0 && task.secLeft === 0)) return;
 
     const startPlayTimerMs = Date.now();
     const minFact = minLeft === null ? min : minLeft;
