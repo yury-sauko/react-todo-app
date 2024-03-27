@@ -1,17 +1,15 @@
-import { Component } from 'react';
+import { useState } from 'react';
 import NewTaskForm from '../NewTaskForm/NewTaskForm';
 import TaskList from '../TaskList/TaskList';
 import Footer from '../Footer/Footer';
 import './ToDoApp.css'; // все стили, для таймера не разбивал по файлам
 
-export default class ToDoApp extends Component {
-  state = {
-    taskProps: [],
-    filter: 'All',
-  };
+export default function ToDoApp() {
+  const [taskProps, setTaskProps] = useState([]);
+  const [filter, setFilter] = useState('All');
 
-  addTask = (taskText, min, sec) => {
-    this.setState(({ taskProps }) => {
+  const addTask = (taskText, min, sec) => {
+    setTaskProps((prevTaskProps) => {
       const newTask = {
         taskClass: '',
         taskText,
@@ -21,99 +19,80 @@ export default class ToDoApp extends Component {
         minLeft: null,
         secLeft: null,
         timerId: null,
-        // isTimerFull: true, // так и не использовал этот флаг
         taskCreated: new Date(),
         taskChecked: false,
-        taskId: `${this.state.taskProps.length}-${Math.random().toFixed(4)}`,
+        taskId: `${taskProps.length}-${Math.random().toFixed(4)}`,
       };
 
-      return { taskProps: [...taskProps, newTask] };
+      return [...prevTaskProps, newTask];
     });
   };
 
-  editTask = (id, newTaskText) => {
-    this.setState(({ taskProps }) => {
-      const idx = taskProps.findIndex((el) => el.taskId === id);
-      const editingTask = { ...taskProps[idx] };
+  const editTask = (id, newTaskText) => {
+    setTaskProps((prevTaskProps) => {
+      const idx = prevTaskProps.findIndex((el) => el.taskId === id);
+      const editingTask = { ...prevTaskProps[idx] };
       clearTimeout(editingTask.timerId);
       editingTask.isPlayActive = false;
       editingTask.taskText = newTaskText;
 
-      const newTaskPropsArr = taskProps.with(idx, editingTask);
-
-      return { taskProps: newTaskPropsArr };
+      return prevTaskProps.with(idx, editingTask);
     });
   };
 
-  deleteTask = (id) => {
-    this.setState(({ taskProps }) => {
-      const idx = taskProps.findIndex((el) => el.taskId === id);
+  const deleteTask = (id) => {
+    setTaskProps((prevTaskProps) => {
+      const idx = prevTaskProps.findIndex((el) => el.taskId === id);
+      clearTimeout(prevTaskProps[idx].timerId);
 
-      clearTimeout(taskProps[idx].timerId);
-
-      const newTaskPropsArr = [...taskProps.slice(0, idx), ...taskProps.slice(idx + 1)];
-
-      return { taskProps: newTaskPropsArr };
+      return [...prevTaskProps.slice(0, idx), ...prevTaskProps.slice(idx + 1)];
     });
   };
 
-  toggleCompleteTask = (id) => {
-    this.setState(({ taskProps }) => {
-      const idx = taskProps.findIndex((el) => el.taskId === id);
-      const task = { ...taskProps[idx] };
+  const toggleCompleteTask = (id) => {
+    setTaskProps((prevTaskProps) => {
+      const idx = prevTaskProps.findIndex((el) => el.taskId === id);
+      const task = { ...prevTaskProps[idx] };
 
       if (task.taskChecked) {
         task.taskClass = '';
       } else if (!task.taskChecked) {
         task.taskClass = 'completed';
-        clearTimeout(taskProps[idx].timerId);
+        clearTimeout(prevTaskProps[idx].timerId);
         task.isPlayActive = false;
         task.minLeft = 0;
         task.secLeft = 0;
       }
       task.taskChecked = !task.taskChecked;
 
-      const newTaskPropsArr = taskProps.with(idx, task);
-
-      return { taskProps: newTaskPropsArr };
+      return prevTaskProps.with(idx, task);
     });
   };
 
-  changeFilter = (filterName) => {
-    this.setState({ filter: filterName });
-  };
+  const changeFilter = (filterName) => setFilter(filterName);
 
-  showFilteredTasks = (filterName) => {
+  const showFilteredTasks = (filterName) => {
     let filteredTasks;
 
     if (filterName === 'All') {
-      filteredTasks = this.state.taskProps;
+      filteredTasks = taskProps;
     } else if (filterName === 'Active') {
-      filteredTasks = this.state.taskProps.filter((el) => el.taskClass === '');
+      filteredTasks = taskProps.filter((el) => el.taskClass === '');
     } else {
-      filteredTasks = this.state.taskProps.filter((el) => el.taskClass === 'completed');
+      filteredTasks = taskProps.filter((el) => el.taskClass === 'completed');
     }
 
     return filteredTasks;
   };
 
-  deleteCompletedTasks = () => {
-    this.setState(({ taskProps }) => {
-      const newTaskPropsArr = taskProps.filter((el) => el.taskClass !== 'completed');
+  const deleteCompletedTasks = () =>
+    setTaskProps((prevTaskProps) => prevTaskProps.filter((el) => el.taskClass !== 'completed'));
 
-      return { taskProps: newTaskPropsArr };
-    });
-  };
+  const countingTasksLeft = () => taskProps.filter((el) => el.taskClass !== 'completed').length;
 
-  countingTasksLeft = () => {
-    const tasksLeft = this.state.taskProps.filter((el) => el.taskClass !== 'completed').length;
-
-    return tasksLeft;
-  };
-
-  onClickIconPlay = (id) => {
-    let idx = this.state.taskProps.findIndex((el) => el.taskId === id);
-    const task = { ...this.state.taskProps[idx] };
+  const onClickIconPlay = (id) => {
+    let idx = taskProps.findIndex((el) => el.taskId === id);
+    const task = { ...taskProps[idx] };
 
     const { min, sec, isPlayActive, minLeft, secLeft } = task;
 
@@ -123,8 +102,7 @@ export default class ToDoApp extends Component {
     const minFact = minLeft === null ? min : minLeft;
     const secFact = secLeft === null ? sec : secLeft;
     const taskTimeMs = (minFact * 60 + secFact) * 1000;
-    const appThis = this;
-    const tasksCount = this.state.taskProps.length;
+    const tasksCount = taskProps.length; // +++++++++++++++++
 
     let timerId = setTimeout(function timer() {
       const timePassedMs = Date.now() - startPlayTimerMs;
@@ -139,80 +117,72 @@ export default class ToDoApp extends Component {
       // так как после удаления остается крайний запланированный setTimeout
       if (!timerId) return;
 
-      // Актуализирует индекс таски с запущенным таймером
-      // в случае удаления другой таски в списке выше
-      if (appThis.state.taskProps.length !== tasksCount) {
-        idx = appThis.state.taskProps.findIndex((el) => el.taskId === task.taskId);
-      }
-
-      appThis.setState(({ taskProps }) => {
+      setTaskProps((prevTaskProps) => {
         task.isPlayActive = true;
         task.minLeft = minutesLeft;
         task.secLeft = secondsLeft;
         task.timerId = timerId;
 
-        const newTaskPropsArr = taskProps.with(idx, task);
+        // Актуализирует индекс таски с запущенным таймером
+        // в случае удаления другой таски в списке выше
+        if (prevTaskProps.length !== tasksCount) {
+          idx = prevTaskProps.findIndex((el) => el.taskId === task.taskId);
+        }
 
-        return { taskProps: newTaskPropsArr };
+        return prevTaskProps.with(idx, task);
       });
 
       if (minutesLeft === 0 && secondsLeft === 0) {
         clearTimeout(timerId);
 
-        appThis.setState(({ taskProps }) => {
+        setTaskProps((prevTaskProps) => {
           task.taskClass = 'completed';
           task.taskChecked = true;
           task.isPlayActive = true;
 
-          const newTaskPropsArr = taskProps.with(idx, task);
-
-          return { taskProps: newTaskPropsArr };
+          return prevTaskProps.with(idx, task);
         });
       }
     });
   };
 
-  onClickIconPause = (id) => {
-    const idx = this.state.taskProps.findIndex((el) => el.taskId === id);
-    const task = { ...this.state.taskProps[idx] };
+  const onClickIconPause = (id) => {
+    const idx = taskProps.findIndex((el) => el.taskId === id);
+    const task = { ...taskProps[idx] };
 
     if (task.minLeft === 0 && task.secLeft === 0) return;
 
     clearTimeout(task.timerId);
 
-    this.setState(({ taskProps }) => {
+    setTaskProps((prevTaskProps) => {
       task.isPlayActive = false;
       task.timerId = null;
 
-      const newTaskPropsArr = taskProps.with(idx, task);
-
-      return { taskProps: newTaskPropsArr };
+      return prevTaskProps.with(idx, task);
     });
   };
 
-  render() {
-    const filteredTasks = this.showFilteredTasks(this.state.filter);
+  const filteredTasks = showFilteredTasks(filter);
 
-    return (
-      <section className="todoapp">
-        <NewTaskForm appAddTask={this.addTask} />
-        <section className="main">
-          <TaskList
-            taskProps={filteredTasks}
-            appEditTask={this.editTask}
-            appDeleteTask={this.deleteTask}
-            appToggleCompleteTask={this.toggleCompleteTask}
-            appOnClickIconPlay={this.onClickIconPlay}
-            appOnClickIconPause={this.onClickIconPause}
-          />
-          <Footer
-            filter={this.state.filter}
-            appChangeFilter={this.changeFilter}
-            appDeleteCompletedTasks={this.deleteCompletedTasks}
-            appCountingTasksLeft={this.countingTasksLeft}
-          />
-        </section>
+  return (
+    <section className="todoapp">
+      <NewTaskForm appAddTask={addTask} />
+      <section className="main">
+        <TaskList
+          taskProps={filteredTasks}
+          appEditTask={editTask}
+          appDeleteTask={deleteTask}
+          appToggleCompleteTask={toggleCompleteTask}
+          appOnClickIconPlay={onClickIconPlay}
+          appOnClickIconPause={onClickIconPause}
+        />
+        <Footer
+          filter={filter}
+          appChangeFilter={changeFilter}
+          appDeleteCompletedTasks={deleteCompletedTasks}
+          appCountingTasksLeft={countingTasksLeft}
+        />
       </section>
-    );
-  }
+    </section>
+  );
 }
